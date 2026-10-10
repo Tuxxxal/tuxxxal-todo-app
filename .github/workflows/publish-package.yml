@@ -31,4 +31,17 @@ jobs:
         run: chmod +x gradlew
 
       - name: Publish package to GitHub Packages
-        run: ./gradlew --no-daemon publish
+        run: |
+          set +e
+          OUTPUT=$(./gradlew --no-daemon publish 2>&1)
+          STATUS=$?
+          echo "$OUTPUT"
+          if [ $STATUS -ne 0 ]; then
+            # GitHub Packages rejects re-uploading an existing version with HTTP 409.
+            # That is not a failure for us: the version is already published.
+            if echo "$OUTPUT" | grep -q "status code 409"; then
+              echo "::notice::Version already exists in GitHub Packages, skipping publish."
+              exit 0
+            fi
+            exit $STATUS
+          fi
