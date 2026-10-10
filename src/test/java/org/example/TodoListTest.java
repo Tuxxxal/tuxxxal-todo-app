@@ -18,7 +18,7 @@ class TodoListTest {
 
         todoList.add("buy milk");
 
-        assertEquals(List.of("buy milk"), todoList.getAll());
+        assertEquals(List.of("buy milk"), todoList.getAllTexts());
         assertEquals(1, todoList.size());
     }
 
@@ -30,7 +30,7 @@ class TodoListTest {
         todoList.add("   buy milk   ");
         todoList.add("\twrite report\n");
 
-        assertEquals(List.of("buy milk", "write report"), todoList.getAll());
+        assertEquals(List.of("buy milk", "write report"), todoList.getAllTexts());
     }
 
     @Test
@@ -43,21 +43,21 @@ class TodoListTest {
         todoList.add("   ");
         todoList.add("\t \n");
 
-        assertTrue(todoList.getAll().isEmpty());
+        assertTrue(todoList.getAllTexts().isEmpty());
         assertEquals(0, todoList.size());
     }
 
     @Test
-    @DisplayName("getAll returns a defensive copy")
+    @DisplayName("getAllTexts returns a defensive copy")
     void getAllReturnsCopy() {
         TodoList todoList = new TodoList();
         todoList.add("first");
 
-        List<String> copy = todoList.getAll();
+        List<String> copy = todoList.getAllTexts();
         copy.add("hacked");
         copy.remove(0);
 
-        assertEquals(List.of("first"), todoList.getAll());
+        assertEquals(List.of("first"), todoList.getAllTexts());
     }
 
     @Test
@@ -69,7 +69,7 @@ class TodoListTest {
 
         assertTrue(todoList.remove(0));
 
-        assertEquals(List.of("second"), todoList.getAll());
+        assertEquals(List.of("second"), todoList.getAllTexts());
         assertEquals(1, todoList.size());
     }
 
