@@ -1,9 +1,12 @@
 plugins {
     id 'java'
+    id 'application'
+    id 'maven-publish'
+    id 'com.gradleup.shadow' version '8.3.11'
 }
 
 group = 'org.example'
-version = '1.0-SNAPSHOT'
+version = findProperty('version') ?: '0.1.0'
 
 repositories {
     mavenCentral()
@@ -19,6 +22,35 @@ java {
     sourceCompatibility = JavaVersion.VERSION_23
     targetCompatibility = JavaVersion.VERSION_23
 }
+
+application {
+    mainClass = 'org.example.TodoApp'
+}
+
+shadowJar {
+    archiveBaseName = 'todo-app'
+    archiveClassifier = ''
+    archiveVersion = project.version.toString()
+    mergeServiceFiles()
+}
+
+jar {
+    enabled = false
+}
+
+// The fat jar replaces the thin jar and the runtime classpath, so the
+// distribution tasks of the application plugin would read a stale classpath.
+tasks.named('startScripts') {
+    enabled = false
+}
+tasks.named('distZip') {
+    enabled = false
+}
+tasks.named('distTar') {
+    enabled = false
+}
+
+build.dependsOn shadowJar
 
 test {
     useJUnitPlatform()
