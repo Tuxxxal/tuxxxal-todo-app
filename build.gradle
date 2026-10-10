@@ -52,6 +52,31 @@ tasks.named('distTar') {
 
 build.dependsOn shadowJar
 
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'org.example'
+            artifactId = 'todo-app'
+            version = project.version
+
+            // Publish the fat jar instead of the disabled thin jar.
+            artifact(tasks.shadowJar) {
+                classifier = null
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Tuxxxal/tuxxxal-todo-app")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
+
 test {
     useJUnitPlatform()
 }
